@@ -128,11 +128,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\DX11ShaderManager.cpp" />
     <ClCompile Include="Source\DirectX11Manager.cpp" />
     <ClCompile Include="Source\GameManager.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\PolygonDraw.cpp" />
+    <ClCompile Include="Source\Texture2D_Draw.cpp" />
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,18 +142,21 @@
     <ClInclude Include="Header\DX11ShaderManager.h" />
     <ClInclude Include="Header\GameManager.h" />
     <ClInclude Include="Header\PolygonDraw.h" />
+    <ClInclude Include="Header\Texture2D_Draw.h" />
+    <ClInclude Include="Header\TextureManager.h" />
     <ClInclude Include="Header\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="2DPipeLine.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0_level_9_3</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0_level_9_3</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vsMain</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vsMain</EntryPointName>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
-    </FxCompile>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\directxtex_desktop_2017.2021.1.10.2\build\native\directxtex_desktop_2017.targets" Condition="Exists('..\packages\directxtex_desktop_2017.2021.1.10.2\build\native\directxtex_desktop_2017.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\directxtex_desktop_2017.2021.1.10.2\build\native\directxtex_desktop_2017.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtex_desktop_2017.2021.1.10.2\build\native\directxtex_desktop_2017.targets'))" />
+  </Target>
 </Project>

@@ -28,16 +28,16 @@ void PolygonDraw::Init()
 	//頂点シェーダ作成
 	/*vs.Attach(DX11ShaderManager::GetInstance()->CreateVertexShader("Assets/Shaders/2DPipeLine.hlsl", "vsMain"));*/
 	//作成したバーテックスシェーダを取得
-	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("2DPipeLine.hlsl", "vsMain");
+	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("Assets/Shaders/2DPipeLine.hlsl", "vsMain");
 	//作成したピクセルシェーダを取得
-	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("2DPipeLine.hlsl", "psMain");
+	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("Assets/Shaders/2DPipeLine.hlsl", "psMain");
 
 	//InputLayoutの作成
 	D3D11_INPUT_ELEMENT_DESC elem[] = {
 		{ "POSITION",   0,  DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,  D3D11_INPUT_PER_VERTEX_DATA,    0},
 		{ "TEXCOORD",   0,  DXGI_FORMAT_R32G32B32A32_FLOAT, 0,  12, D3D11_INPUT_PER_VERTEX_DATA,    0}
 	};
-	InputLayout = DX11ShaderManager::GetInstance()->CreateInputLayout(elem, 2, "2DPipeLine.hlsl", "vsMain");
+	InputLayout = DX11ShaderManager::GetInstance()->CreateInputLayout(elem, 2, "Assets/Shaders/2DPipeLine.hlsl", "vsMain");
 
 	vector<Vertex> vertexs =
 	{
