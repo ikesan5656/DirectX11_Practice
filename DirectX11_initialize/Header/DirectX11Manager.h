@@ -65,7 +65,8 @@ private:
 	IDXGISwapChain * m_pSwapChain = nullptr;
 	//ディスプレイのバッグバッファのテクスチャ
 	//Texture2D                       m_pRTTex = nullptr;
-	ID3D11Texture2D * m_pRTTex = nullptr;;
+	ID3D11Texture2D* m_pBackBuffer_DSTex;
+	ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV;
 	//ディスプレイのバッグバッファのテクスチャを描画先として指定できるようにしたもの
 	//ComPtr<ID3D11RenderTargetView>  m_pRTView = nullptr;
 	ID3D11RenderTargetView * m_pRTView = nullptr;

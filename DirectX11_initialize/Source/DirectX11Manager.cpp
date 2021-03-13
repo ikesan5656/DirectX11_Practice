@@ -166,17 +166,45 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	//スワップチェインとデバイスの作成
 	CreateDeviceAndSwapChain(hWnd);
 
+	//バックバッファーテクスチャーを取得（既にあるので作成ではない
+	ID3D11Texture2D *pBackBuffer_Tex;
+
 	// スワップチェインに用意されたバッファ（2Dテクスチャ）を取得
-	auto hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&m_pRTTex));
+	auto hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
 	if (FAILED(hr)) {
 		return hr;
 	}
 
 	// レンダーターゲットView作成
-	hr = m_pDevice->CreateRenderTargetView(m_pRTTex, NULL, &m_pRTView);
+	hr = m_pDevice->CreateRenderTargetView(pBackBuffer_Tex, NULL, &m_pRTView);
 	if (FAILED(hr)) {
 		return hr;
 	}
+
+	if (pBackBuffer_Tex) {
+		pBackBuffer_Tex->Release();
+		pBackBuffer_Tex = nullptr;
+	}
+
+	//デプスステンシルビュー用のテクスチャーを作成
+	D3D11_TEXTURE2D_DESC descDepth;
+	descDepth.Width = 1280;
+	descDepth.Height = 720;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	m_pDevice->CreateTexture2D(&descDepth, NULL, &m_pBackBuffer_DSTex);
+	//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
+	m_pDevice->CreateDepthStencilView(m_pBackBuffer_DSTex, NULL, &m_pBackBuffer_DSTexDSV);
+
+	//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
+	m_pImContext->OMSetRenderTargets(1, &m_pRTView, m_pBackBuffer_DSTexDSV);
 
 	// viewportの作成
 	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
@@ -185,9 +213,11 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	m_Viewport.MaxDepth = 1.0f;
 	m_Viewport.TopLeftX = 0;
 	m_Viewport.TopLeftY = 0;
+	//ビューポートセット
+	m_pImContext->RSSetViewports(1, &m_Viewport);
 
 	//ラスタライザーの定義
-	ID3D11RasterizerState* hpRasterizerState = NULL;
+	
 	D3D11_RASTERIZER_DESC hRasterizerDesc = {
 			D3D11_FILL_SOLID,
 			D3D11_CULL_FRONT,	//ポリゴンを前から見る
@@ -200,6 +230,8 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 			FALSE,
 			FALSE
 	};
+
+	ID3D11RasterizerState* hpRasterizerState = NULL;
 
 	//ラスタライザーの作成
 	//カリングモードやフィルモードを変更出来る
@@ -231,11 +263,19 @@ void DirectX11Manager::AllRelease()
 		m_pRTView->Release();
 		m_pRTView = nullptr;
 	}
+	if (m_pBackBuffer_DSTex) {
+		m_pBackBuffer_DSTex->Release();
+		m_pBackBuffer_DSTex = nullptr;
+	}
 
-	if (m_pRTTex) {
+	if (m_pBackBuffer_DSTexDSV) {
+		m_pBackBuffer_DSTexDSV->Release();
+		m_pBackBuffer_DSTexDSV = nullptr;
+	}
+	/*if (m_pRTTex) {
 		m_pRTTex->Release();
 		m_pRTTex = nullptr;
-	}
+	}*/
 
 	/*シェーダー関連開放*/
 
@@ -327,7 +367,7 @@ void DirectX11Manager::DrawBegin()
 	//レンダーターゲットのすべての要素を1つの値に設定
 	m_pImContext->ClearRenderTargetView(m_pRTView, ClearColor);
 	//ビューポートの配列をパイプラインのラスタライザーステージにバインドする
-	m_pImContext->RSSetViewports(1, &m_Viewport);
+	//m_pImContext->RSSetViewports(1, &m_Viewport);
 
 	/*--------------------------------------------------------------------------*/
 

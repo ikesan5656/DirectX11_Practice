@@ -13,10 +13,7 @@ struct Vertex
 
 Texture2D_Draw::Texture2D_Draw()
 {
-	//作成したバーテックスシェーダを取得
-	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("2DPipeLine.hlsl", "vsMain");
-	//作成したピクセルシェーダを取得
-	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("2DPipeLine.hlsl", "psMain");
+
 	//テクスチャを取得
 	//texture = TextureManager::GetInstance()->CreateTextureFromFile("")
 }
@@ -28,7 +25,10 @@ Texture2D_Draw::~Texture2D_Draw()
 
 void Texture2D_Draw::Init()
 {
-
+	//作成したバーテックスシェーダを取得
+	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("2DPipeLine.hlsl", "vsMain");
+	//作成したピクセルシェーダを取得
+	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("2DPipeLine.hlsl", "psMain");
 }
 
 void Texture2D_Draw::Uninit()
