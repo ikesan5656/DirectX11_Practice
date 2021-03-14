@@ -1,6 +1,10 @@
 #include "DirectX11Manager.h"
 #include "WindowManager.h"
-
+#include <locale.h>
+#include"DirectXTex.h"
+#include <iostream>
+DirectX::TexMetadata metadata;
+DirectX::ScratchImage image;
 
 DirectX11Manager::DirectX11Manager()
 {
@@ -356,6 +360,48 @@ void DirectX11Manager::SetIndexBuffer(ID3D11Buffer * IndexBuffer)
 void DirectX11Manager::SetTexture2D(UINT RegisterNo, ID3D11ShaderResourceView * Texture)
 {
 	m_pImContext->PSSetShaderResources(RegisterNo, 1, &Texture);
+}
+
+ID3D11ShaderResourceView * DirectX11Manager::CreateTextureFromFile(const wchar_t * filename)
+{
+	ID3D11ShaderResourceView* ShaderResView;
+	char ms[100]; //•ÏŠ·‚µ‚½’l‚ğŠi”[‚µ‚½‚¢•Ï”
+	size_t num;//•ÏŠ·‚³‚ê‚½•¶š”‚ğ‹L˜^‚·‚é•Ï”
+	setlocale(LC_CTYPE, "jpn");
+	//wcstombs_s(ms, filename, 100,);
+	wcstombs_s(&num, ms, sizeof(ms), filename, _TRUNCATE);
+	char* extension = strstr(ms, ".");
+
+	if (extension == NULL)
+		return nullptr;
+
+	if (strcmp(extension, ".tga") == 0 || strcmp(extension, ".TGA") == 0) {
+		TexMetadata meta;
+		GetMetadataFromTGAFile(filename, meta);
+
+		std::unique_ptr<ScratchImage> image(new ScratchImage);
+		HRESULT hr = LoadFromTGAFile(filename, &meta, *image);
+		if (FAILED(hr))
+			return nullptr;
+		hr = CreateShaderResourceView(m_pDevice, image->GetImages(), image->GetImageCount(), meta, &ShaderResView);
+		if (FAILED(hr))
+			return nullptr;
+		return ShaderResView;
+	}
+	else
+	{
+		TexMetadata meta;
+		GetMetadataFromWICFile(filename, WIC_FLAGS::WIC_FLAGS_NONE, meta);
+
+		std::unique_ptr<ScratchImage> image(new ScratchImage);
+		HRESULT hr = LoadFromWICFile(filename, WIC_FLAGS::WIC_FLAGS_NONE, &meta, *image);
+		if (FAILED(hr))
+			return nullptr;
+		hr = CreateShaderResourceView(m_pDevice, image->GetImages(), image->GetImageCount(), meta, &ShaderResView);
+		if (FAILED(hr))
+			return nullptr;
+		return ShaderResView;
+	}
 }
 
 void DirectX11Manager::DrawBegin()

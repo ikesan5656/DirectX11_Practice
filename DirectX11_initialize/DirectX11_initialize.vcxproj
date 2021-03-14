@@ -128,7 +128,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\DX11ShaderManager.cpp" />
     <ClCompile Include="Source\DirectX11Manager.cpp" />
     <ClCompile Include="Source\GameManager.cpp" />
@@ -143,7 +142,6 @@
     <ClInclude Include="Header\GameManager.h" />
     <ClInclude Include="Header\PolygonDraw.h" />
     <ClInclude Include="Header\Texture2D_Draw.h" />
-    <ClInclude Include="Header\TextureManager.h" />
     <ClInclude Include="Header\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>

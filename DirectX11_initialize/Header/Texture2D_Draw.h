@@ -27,6 +27,10 @@ private:
 	//テクスチャ
 	ID3D11ShaderResourceView * texture = nullptr;
 
+	ID3D11Buffer* m_pConstantBuffer = nullptr;
+	ID3D11Buffer* m_pVertexBuffer = nullptr;
+
+	ID3D11SamplerState* m_pSampler = nullptr;//テクスチャーのサンプラー
 	vector<UINT> idxs;
 
 public:

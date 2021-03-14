@@ -74,6 +74,7 @@ private:
 	D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
 
 	//ID3D11VertexShader * VertexShader = nullptr;
+	
 
 
 public:
@@ -131,7 +132,8 @@ public:
 
 	//2Dテクスチャのセット
 	void SetTexture2D(UINT RegisterNo, ID3D11ShaderResourceView* Texture);
-
+	//テクスチャ読み込み
+	ID3D11ShaderResourceView* CreateTextureFromFile(const wchar_t* filename);
 	//描画開始
 	void DrawBegin();
 	//描画終了
