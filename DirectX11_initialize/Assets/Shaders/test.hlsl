@@ -1,37 +1,41 @@
 //グローバル
 
-Texture2D g_texColor: register(t0);//テクスチャーは レジスターt(n)
-SamplerState g_samLinear : register(s0);//サンプラーはレジスターs(n)
+Texture2D g_Texture: register(t0);
+SamplerState g_Sampler : register(s0);
 
 cbuffer global
 {
-	matrix g_mWVP; //ワールドから射影までの変換行列
-	float4 g_vDiffuse;//ディフューズ色
+	matrix g_W : packoffset(c0); //ワールドから射影までの変換行列
+	float g_ViewPortWidth : packoffset(c4);//ビューポート（スクリーン）横サイズ
+	float g_ViewPortHeight : packoffset(c5);//ビューポート（スクリーン）縦サイズ
 };
-
 //構造体
-struct VS_OUTPUT
+struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
-	float2 Tex : TEXCOORD;
+	float2 UV : TEXCOORD;
 };
 
 //
-//バーテックスシェーダー
 //
-VS_OUTPUT vsMain(float4 Pos : POSITION, float2 Tex : TEXCOORD)
+//バーテックスシェーダー
+PS_INPUT vsMain(float4 Pos : POSITION, float2 UV : TEXCOORD)
 {
-	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.Pos = mul(Pos, g_mWVP);
-	output.Tex = Tex;
+	PS_INPUT Out;
 
-	return output;
+	Out.Pos = mul(Pos, g_W);
+
+	Out.Pos.x = (Out.Pos.x / g_ViewPortWidth) * 2 - 1;
+	Out.Pos.y = 1 - (Out.Pos.y / g_ViewPortHeight) * 2;
+
+	Out.UV = UV;
+
+	return Out;
 }
-
+//
 //
 //ピクセルシェーダー
-//
-float4 psMain(VS_OUTPUT input) : SV_Target
+float4 psMain(PS_INPUT Input) : SV_Target
 {
-	return g_texColor.Sample(g_samLinear, input.Tex);
+	return g_Texture.Sample(g_Sampler, Input.UV);
 }

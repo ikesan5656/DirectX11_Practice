@@ -8,16 +8,16 @@
 #pragma once
 
 class PolygonDraw;
+class Texture2D_Draw;
 
 class GameManager
 {
 
 private:
 
-	//コンストラクタ
-	GameManager();
 
 	PolygonDraw *m_PolygonDraw;
+	Texture2D_Draw* m_Texture2D_Draw;
 
 public:
 	//デストラクタ

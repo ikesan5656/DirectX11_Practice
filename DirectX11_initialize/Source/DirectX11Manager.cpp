@@ -192,8 +192,8 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 
 	//デプスステンシルビュー用のテクスチャーを作成
 	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = 1280;
-	descDepth.Height = 720;
+	descDepth.Width = SCREEN_WIDTH;
+	descDepth.Height = SCREEN_HEIGHT;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -205,7 +205,7 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	descDepth.MiscFlags = 0;
 	m_pDevice->CreateTexture2D(&descDepth, NULL, &m_pBackBuffer_DSTex);
 	//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
-	m_pDevice->CreateDepthStencilView(m_pBackBuffer_DSTex, NULL, &m_pBackBuffer_DSTexDSV);
+	m_pDevice->CreateDepthStencilView(m_pBackBuffer_DSTex, NULL, &m_pBackBuffer_DSTexDSV);//正しい動作
 
 	//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
 	m_pImContext->OMSetRenderTargets(1, &m_pRTView, m_pBackBuffer_DSTexDSV);
@@ -368,7 +368,7 @@ ID3D11ShaderResourceView * DirectX11Manager::CreateTextureFromFile(const wchar_t
 	char ms[100]; //変換した値を格納したい変数
 	size_t num;//変換された文字数を記録する変数
 	setlocale(LC_CTYPE, "jpn");
-	//wcstombs_s(ms, filename, 100,);
+	//wcstombs(ms, filename, 100);
 	wcstombs_s(&num, ms, sizeof(ms), filename, _TRUNCATE);
 	char* extension = strstr(ms, ".");
 

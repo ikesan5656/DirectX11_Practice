@@ -2,7 +2,7 @@
 #include "DX11ShaderManager.h"
 //シェーダコンパイラ関連
 #include <d3dcompiler.h>
-
+#include <locale.h>
 //シェーダファイル名格納配列
 static const char *ShaderName[] = //[テクスチャファイル番号][最大文字列]
 {

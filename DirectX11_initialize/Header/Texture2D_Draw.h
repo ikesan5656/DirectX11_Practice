@@ -25,7 +25,7 @@ private:
 	ID3D11Buffer * VertexBuffer = nullptr;
 	ID3D11Buffer * IndexBuffer = nullptr;
 	//テクスチャ
-	ID3D11ShaderResourceView * texture = nullptr;
+	ID3D11ShaderResourceView * m_pTexture = nullptr;
 
 	ID3D11Buffer* m_pConstantBuffer = nullptr;
 	ID3D11Buffer* m_pVertexBuffer = nullptr;

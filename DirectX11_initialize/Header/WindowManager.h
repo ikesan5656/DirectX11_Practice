@@ -16,8 +16,11 @@
 #define CLASS_NAME "DirectX11 Template"
 #define WINDOW_NAME "DeferredRenderer"//ウィンドウ名
 //スクリーンの縦横幅
-#define SCREEN_WIDTH	(1280)
-#define SCREEN_HEIGHT	(720)
+//#define SCREEN_WIDTH	(1280)
+//#define SCREEN_HEIGHT	(720)
+
+#define SCREEN_WIDTH	(1920)
+#define SCREEN_HEIGHT	(1080)
 
 
 /**
@@ -25,6 +28,7 @@
 * @details 今のところ1つしか存在しないものなのでシングルトン
 */
 class WindowManager
+
 {
 private:
 	//ウィンドウハンドル

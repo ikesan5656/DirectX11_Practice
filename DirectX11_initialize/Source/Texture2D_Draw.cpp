@@ -1,6 +1,8 @@
 #include "Texture2D_Draw.h"
 #include"DX11ShaderManager.h"
-
+#include "WindowManager.h"
+#include "DirectXTex.h"
+#include "WICTextureLoader.h"
 
 //頂点情報構造体
 struct Vertex
@@ -41,7 +43,7 @@ Texture2D_Draw::~Texture2D_Draw()
 void Texture2D_Draw::Init()
 {
 	//作成したバーテックスシェーダを取得
-	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("2DPipeLine.hlsl", "vsMain");
+	VertexShader = DX11ShaderManager::GetInstance()->CreateVertexShader("Assets/Shaders/test.hlsl", "vsMain");
 
 	//頂点インプットレイアウトを定義	
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -49,10 +51,10 @@ void Texture2D_Draw::Init()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	InputLayout = DX11ShaderManager::GetInstance()->CreateInputLayout(layout, 2, "Assets/Shaders/2DPipeLine.hlsl", "vsMain");
+	InputLayout = DX11ShaderManager::GetInstance()->CreateInputLayout(layout, 2, "Assets/Shaders/test.hlsl", "vsMain");
 
 	//作成したピクセルシェーダを取得
-	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("2DPipeLine.hlsl", "psMain");
+	PixelShader = DX11ShaderManager::GetInstance()->CreatePixelShader("Assets/Shaders/test.hlsl", "psMain");
 
 	//コンスタントバッファー作成　ここでは変換行列渡し用
 	D3D11_BUFFER_DESC cb;
@@ -101,11 +103,46 @@ void Texture2D_Draw::Init()
 	DirectX11Manager::GetInstance()->GetDevice()->CreateSamplerState(&SamDesc, &m_pSampler);
 
 	//テクスチャ読み込み
+	m_pTexture = DirectX11Manager::GetInstance()->CreateTextureFromFile(L"Assets/Textures/WoodenBox_simple.jpg");
+	//CreateWICTextureFromFile(DirectX11Manager::GetInstance()->GetDevice(), (L"sample.png"), &m_pTexture, &m_pTextureView);
+	//CreateWICTextureFromFile()
 }
 
 void Texture2D_Draw::Uninit()
 {
+	if (VertexShader) {
+		VertexShader->Release();
+		VertexShader = nullptr;
+	}
+	if (PixelShader) {
+		PixelShader->Release();
+		PixelShader = nullptr;
+	}
+	if (InputLayout) {
+		InputLayout->Release();
+		InputLayout = nullptr;
+	}
+	if (m_pConstantBuffer) {
+		m_pConstantBuffer->Release();
+		m_pConstantBuffer = nullptr;
+	}
 
+	if (m_pVertexBuffer) {
+		m_pVertexBuffer->Release();
+		m_pVertexBuffer = nullptr;
+	}
+
+	if (m_pSampler) {
+		m_pSampler->Release();
+		m_pSampler = nullptr;
+	}
+
+	if (m_pTexture) {
+		m_pTexture->Release();
+		m_pTexture = nullptr;
+	}
+
+	
 }
 
 void Texture2D_Draw::Update()
@@ -115,5 +152,46 @@ void Texture2D_Draw::Update()
 
 void Texture2D_Draw::Draw()
 {
+	XMMATRIX World;
+	//ワールドトランスフォーム
+	float x = 0;
+	x += 0.01;
+	XMMATRIX Tran;
+	Tran = DirectX::XMMatrixTranslation(x, 0, 0);
+	World = Tran;
 
+	//使用するシェーダのセット
+	DX11ShaderManager::GetInstance()->SetVertexShader(VertexShader);
+	DX11ShaderManager::GetInstance()->SetPixelShader(PixelShader);
+
+	//シェーダーのコンスタントバッファーに各種データを渡す
+	D3D11_MAPPED_SUBRESOURCE pData;
+	SIMPLESHADER_CONSTANT_BUFFER cb;
+	if (SUCCEEDED(DirectX11Manager::GetInstance()->GetContext()->Map(m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData)))
+	{
+		//ワールド行列を渡す
+		cb.mW = World;
+		cb.mW = DirectX::XMMatrixTranspose(World);
+		//ビューポートサイズを渡す（クライアント領域の横と縦）
+		cb.ViewPortWidth = SCREEN_WIDTH;
+		cb.ViewPortHeight = SCREEN_HEIGHT;
+
+		memcpy_s(pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
+		DirectX11Manager::GetInstance()->GetContext()->Unmap(m_pConstantBuffer, 0);
+	}
+
+	//コンスタントバッファー
+	DirectX11Manager::GetInstance()->GetContext()->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+	DirectX11Manager::GetInstance()->GetContext()->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+
+	//頂点インプットレイアウトをセット
+	DirectX11Manager::GetInstance()->GetContext()->IASetInputLayout(InputLayout);
+	//プリミティブ・トポロジーをセット
+	DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	//テクスチャをシェーダに渡す
+	DirectX11Manager::GetInstance()->GetContext()->PSSetSamplers(0, 1, &m_pSampler);
+	DirectX11Manager::GetInstance()->GetContext()->PSSetShaderResources(0, 1, &m_pTexture);
+
+	//プリミティブをレンダリング
+	DirectX11Manager::GetInstance()->GetContext()->Draw(4, 0);
 }
