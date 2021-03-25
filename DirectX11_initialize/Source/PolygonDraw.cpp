@@ -1,7 +1,7 @@
 #include "PolygonDraw.h"
 
 #include"DX11ShaderManager.h"
-
+#include "WindowManager.h"
 
 //頂点情報構造体
 struct Vertex
@@ -39,7 +39,7 @@ void PolygonDraw::Init()
 	};
 	InputLayout = DX11ShaderManager::GetInstance()->CreateInputLayout(elem, 2, "Assets/Shaders/2DPipeLine.hlsl", "vsMain");
 
-	vector<Vertex> vertexs =
+	Vertex vertexs[4] =
 	{
 		{ XMFLOAT3(-0.5f,-0.5f,0), XMFLOAT4(1,0,0,1)},
 		{ XMFLOAT3(0.5f,-0.5f,0), XMFLOAT4(0,1,0,1)},
@@ -48,7 +48,7 @@ void PolygonDraw::Init()
 	};
 
 	
-	VertexBuffer = DirectX11Manager::GetInstance()->CreateVertexBuffer(vertexs.data(), static_cast<UINT>(vertexs.size()));
+	VertexBuffer = DirectX11Manager::GetInstance()->CreateVertexBuffer(sizeof(vertexs), vertexs);
 
 	//インデックス情報の設定
 	idxs = { 0,1,2,0,2,3 };
@@ -94,9 +94,21 @@ void PolygonDraw::Update()
 
 void PolygonDraw::Draw()
 {
+	// viewportの作成
+	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
+	m_Viewport.Height = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().bottom - WindowManager::GetInstance()->GetRC().top);
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+	m_Viewport.TopLeftX = 0;
+	m_Viewport.TopLeftY = 0;
+	//ビューポートセット
+	DirectX11Manager::GetInstance()->GetContext()->RSSetViewports(1, &m_Viewport);
+
 	DX11ShaderManager::GetInstance()->SetVertexShader(VertexShader);
 	DX11ShaderManager::GetInstance()->SetPixelShader(PixelShader);
 	DX11ShaderManager::GetInstance()->SetInputLayout(InputLayout);
+	//プリミティブ・トポロジーをセット
+	DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DirectX11Manager::GetInstance()->SetVertexBuffer(VertexBuffer, sizeof(Vertex));
 	DirectX11Manager::GetInstance()->SetIndexBuffer(IndexBuffer);
 

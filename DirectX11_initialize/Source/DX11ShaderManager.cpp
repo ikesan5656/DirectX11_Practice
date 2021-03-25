@@ -204,8 +204,12 @@ ID3D11InputLayout * DX11ShaderManager::CreateInputLayout(D3D11_INPUT_ELEMENT_DES
 			MessageBox(NULL, (char*)pErrorBlob->GetBufferPointer(), "", 0);
 		}
 	}
-	hr = DirectX11Manager::GetInstance()->GetDevice()->CreateInputLayout(layout, elem_num, blob->GetBufferPointer(),
-		blob->GetBufferSize(), &pVertexLayout);
+	hr = DirectX11Manager::GetInstance()->GetDevice()->CreateInputLayout(
+		layout, 
+		elem_num, 
+		blob->GetBufferPointer(),
+		blob->GetBufferSize(),
+		&pVertexLayout);
 	assert(SUCCEEDED(hr));
 
 	if (blob) {

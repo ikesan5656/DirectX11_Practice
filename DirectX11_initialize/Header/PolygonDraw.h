@@ -22,6 +22,8 @@ class PolygonDraw
 
 private:
 
+	D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
+
 	//VertexShader vs;
 	ID3D11VertexShader * VertexShader = nullptr;
 	ID3D11PixelShader * PixelShader = nullptr;

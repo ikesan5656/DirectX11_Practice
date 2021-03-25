@@ -194,7 +194,7 @@ bool WindowManager::MessageHandling()
 				//CManager::Draw();//マネージャ描画
 					//ポリゴンの生成方法の指定(描画の直前)
 				//今回はトライアングルリストで描画
-				DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				//DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 				DirectX11Manager::GetInstance()->DrawBegin();
 				GameManager::GetInstance()->Draw();
 				DirectX11Manager::GetInstance()->DrawEnd();

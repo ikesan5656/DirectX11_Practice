@@ -71,7 +71,7 @@ private:
 	//ComPtr<ID3D11RenderTargetView>  m_pRTView = nullptr;
 	ID3D11RenderTargetView * m_pRTView = nullptr;
 	//ウィンドウのサイズの指定
-	D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
+	//D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
 
 	//ID3D11VertexShader * VertexShader = nullptr;
 	
@@ -101,20 +101,22 @@ public:
 	
 	//頂点バッファ作成
 	//Templeteの仕様のためヘッダに記述している
-	template<class x>
-	ID3D11Buffer* CreateVertexBuffer(x* VertexData, UINT VertexNum)
+	//template<class x>
+	ID3D11Buffer* CreateVertexBuffer(int size, void* pBuffer)
 	{
 		//頂点バッファ作成
 		D3D11_BUFFER_DESC hBufferDesc;
-		ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
-		hBufferDesc.ByteWidth = sizeof(x) * VertexNum;
+		hBufferDesc.ByteWidth = size;
 		hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		hBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		hBufferDesc.CPUAccessFlags = 0;
+		hBufferDesc.MiscFlags = 0;
+		hBufferDesc.StructureByteStride = 0;
 
 		D3D11_SUBRESOURCE_DATA hSubResourceData;
-		ZeroMemory(&hSubResourceData, sizeof(hSubResourceData));
-		hSubResourceData.pSysMem = VertexData;
+		hSubResourceData.pSysMem = pBuffer;
+		hSubResourceData.SysMemSlicePitch = size;
+		hSubResourceData.SysMemPitch = size;
 
 		ID3D11Buffer* hpBuffer;
 		if (FAILED(m_pDevice->CreateBuffer(&hBufferDesc, &hSubResourceData, &hpBuffer))) {
@@ -132,8 +134,11 @@ public:
 
 	//2Dテクスチャのセット
 	void SetTexture2D(UINT RegisterNo, ID3D11ShaderResourceView* Texture);
+
+	//サンプラー作成(テクスチャ描画に作成)
+	ID3D11SamplerState* CreateSampler();
 	//テクスチャ読み込み
-	ID3D11ShaderResourceView* CreateTextureFromFile(const wchar_t* filename);
+	ID3D11ShaderResourceView* CreateTextureFromFile(const char * filename);
 	//描画開始
 	void DrawBegin();
 	//描画終了

@@ -1,41 +1,41 @@
-//グローバル
+//2Dテクスチャを表示する
 
-Texture2D g_Texture: register(t0);
-SamplerState g_Sampler : register(s0);
-
-cbuffer global
+struct VS_INPUT
 {
-	matrix g_W : packoffset(c0); //ワールドから射影までの変換行列
-	float g_ViewPortWidth : packoffset(c4);//ビューポート（スクリーン）横サイズ
-	float g_ViewPortHeight : packoffset(c5);//ビューポート（スクリーン）縦サイズ
-};
-//構造体
-struct PS_INPUT
-{
-	float4 Pos : SV_POSITION;
+	float3 Position : POSITION;
+	float4 Color : COLOR;
 	float2 UV : TEXCOORD;
 };
 
-//
-//
-//バーテックスシェーダー
-PS_INPUT vsMain(float4 Pos : POSITION, float2 UV : TEXCOORD)
+struct VS_OUTPUT
 {
-	PS_INPUT Out;
+	float4 Position : SV_POSITION;
+	float4 Color : TEXCOORD0;
+	float2 UV : TEXCOORD1;
+};
 
-	Out.Pos = mul(Pos, g_W);
-
-	Out.Pos.x = (Out.Pos.x / g_ViewPortWidth) * 2 - 1;
-	Out.Pos.y = 1 - (Out.Pos.y / g_ViewPortHeight) * 2;
-
-	Out.UV = UV;
-
-	return Out;
+void vsMain(
+	in VS_INPUT In,
+	out VS_OUTPUT Out
+)
+{
+	Out.Position.xyz = In.Position.xyz;
+	Out.Position.w = 1.0f;
+	Out.Color = In.Color;
+	Out.UV = In.UV;
 }
-//
-//
-//ピクセルシェーダー
-float4 psMain(PS_INPUT Input) : SV_Target
+
+typedef VS_OUTPUT PS_INPUT;
+
+
+Texture2D diffuse : register(t0);
+SamplerState samplerDiffuse : register(s0);
+
+void psMain(
+	in PS_INPUT In,
+	out float4 OutColor : SV_Target0
+)
 {
-	return g_Texture.Sample(g_Sampler, Input.UV);
+	float4 tex = diffuse.Sample(samplerDiffuse, In.UV);
+	OutColor = In.Color * tex;
 }

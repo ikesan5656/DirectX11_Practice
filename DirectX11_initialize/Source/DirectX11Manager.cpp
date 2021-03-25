@@ -191,7 +191,7 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	}
 
 	//デプスステンシルビュー用のテクスチャーを作成
-	D3D11_TEXTURE2D_DESC descDepth;
+	/*D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width = SCREEN_WIDTH;
 	descDepth.Height = SCREEN_HEIGHT;
 	descDepth.MipLevels = 1;
@@ -208,21 +208,21 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	m_pDevice->CreateDepthStencilView(m_pBackBuffer_DSTex, NULL, &m_pBackBuffer_DSTexDSV);//正しい動作
 
 	//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
-	m_pImContext->OMSetRenderTargets(1, &m_pRTView, m_pBackBuffer_DSTexDSV);
+	m_pImContext->OMSetRenderTargets(1, &m_pRTView, m_pBackBuffer_DSTexDSV);*/
 
 	// viewportの作成
-	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
-	m_Viewport.Height = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().bottom - WindowManager::GetInstance()->GetRC().top);
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
-	//ビューポートセット
-	m_pImContext->RSSetViewports(1, &m_Viewport);
+	//m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
+	//m_Viewport.Height = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().bottom - WindowManager::GetInstance()->GetRC().top);
+	//m_Viewport.MinDepth = 0.0f;
+	//m_Viewport.MaxDepth = 1.0f;
+	//m_Viewport.TopLeftX = 0;
+	//m_Viewport.TopLeftY = 0;
+	////ビューポートセット
+	//m_pImContext->RSSetViewports(1, &m_Viewport);
 
 	//ラスタライザーの定義
 	
-	D3D11_RASTERIZER_DESC hRasterizerDesc = {
+	/*D3D11_RASTERIZER_DESC hRasterizerDesc = {
 			D3D11_FILL_SOLID,
 			D3D11_CULL_FRONT,	//ポリゴンを前から見る
 			FALSE,
@@ -233,22 +233,22 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 			FALSE,
 			FALSE,
 			FALSE
-	};
+	};*/
 
-	ID3D11RasterizerState* hpRasterizerState = NULL;
+	//ID3D11RasterizerState* hpRasterizerState = NULL;
 
 	//ラスタライザーの作成
 	//カリングモードやフィルモードを変更出来る
-	if (FAILED(m_pDevice->CreateRasterizerState(&hRasterizerDesc, &hpRasterizerState))) {
+	//if (FAILED(m_pDevice->CreateRasterizerState(&hRasterizerDesc, &hpRasterizerState))) {
 	/*	MessageBox(hWnd, _T("CreateRasterizerState"), _T("Err"), MB_ICONSTOP);
 		goto End;*/
-	}
+	//}
 
 	//ラスタライザーをコンテキストに設定
-	m_pImContext->RSSetState(hpRasterizerState);
+	/*m_pImContext->RSSetState(hpRasterizerState);
 
 	hpRasterizerState->Release();
-	hpRasterizerState = nullptr;
+	hpRasterizerState = nullptr;*/
 	return hr;
 }
 
@@ -362,46 +362,69 @@ void DirectX11Manager::SetTexture2D(UINT RegisterNo, ID3D11ShaderResourceView * 
 	m_pImContext->PSSetShaderResources(RegisterNo, 1, &Texture);
 }
 
-ID3D11ShaderResourceView * DirectX11Manager::CreateTextureFromFile(const wchar_t * filename)
+ID3D11SamplerState* DirectX11Manager::CreateSampler()
 {
-	ID3D11ShaderResourceView* ShaderResView;
-	char ms[100]; //変換した値を格納したい変数
-	size_t num;//変換された文字数を記録する変数
-	setlocale(LC_CTYPE, "jpn");
-	//wcstombs(ms, filename, 100);
-	wcstombs_s(&num, ms, sizeof(ms), filename, _TRUNCATE);
-	char* extension = strstr(ms, ".");
+	//テクスチャ用サンプラー作成
+	D3D11_SAMPLER_DESC SamDesc;
+	ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
+	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	SamDesc.MinLOD = 0;
+	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	if (extension == NULL)
-		return nullptr;
+	ID3D11SamplerState* pSampler;
+	m_pDevice->CreateSamplerState(&SamDesc, &pSampler);
 
-	if (strcmp(extension, ".tga") == 0 || strcmp(extension, ".TGA") == 0) {
-		TexMetadata meta;
-		GetMetadataFromTGAFile(filename, meta);
+	return pSampler;
 
-		std::unique_ptr<ScratchImage> image(new ScratchImage);
-		HRESULT hr = LoadFromTGAFile(filename, &meta, *image);
-		if (FAILED(hr))
-			return nullptr;
-		hr = CreateShaderResourceView(m_pDevice, image->GetImages(), image->GetImageCount(), meta, &ShaderResView);
-		if (FAILED(hr))
-			return nullptr;
-		return ShaderResView;
+}
+
+ID3D11ShaderResourceView * DirectX11Manager::CreateTextureFromFile(const char * filename)
+{
+	const char* pExtension = "";
+	for (size_t i = strlen(filename); i == 0; i--)
+	{
+		if (filename[i - 1] == '.')
+		{
+			pExtension = &filename[i];
+		}
+	}
+
+	WCHAR path[256];
+	size_t len = 0;
+	mbstowcs_s(&len, path, 256, filename, _TRUNCATE);
+
+	TexMetadata metadata;
+	ScratchImage image;
+
+	if (strcmp(pExtension, "dds") == 0)
+	{
+		LoadFromDDSFile(path, DDS_FLAGS::DDS_FLAGS_NONE, &metadata, image);
+	}
+	else if (strcmp(pExtension, "tga") == 0)
+	{
+		LoadFromTGAFile(path, &metadata, image);
 	}
 	else
 	{
-		TexMetadata meta;
-		GetMetadataFromWICFile(filename, WIC_FLAGS::WIC_FLAGS_NONE, meta);
-
-		std::unique_ptr<ScratchImage> image(new ScratchImage);
-		HRESULT hr = LoadFromWICFile(filename, WIC_FLAGS::WIC_FLAGS_NONE, &meta, *image);
-		if (FAILED(hr))
-			return nullptr;
-		hr = CreateShaderResourceView(m_pDevice, image->GetImages(), image->GetImageCount(), meta, &ShaderResView);
-		if (FAILED(hr))
-			return nullptr;
-		return ShaderResView;
+		LoadFromWICFile(path, WIC_FLAGS::WIC_FLAGS_NONE, &metadata, image);
 	}
+
+
+
+	ID3D11ShaderResourceView * pView;
+	// 画像からシェーダリソースViewの作成
+	CreateShaderResourceView(m_pDevice, image.GetImages(), image.GetImageCount(), metadata, &pView);
+
+
+	//m_Format = metadata.format;
+	//m_Width = static_cast<UINT>(metadata.width);
+	//m_Height = static_cast<UINT>(metadata.height);
+	//m_pShaderResourceView.Swap(pView);
+	return pView;
 }
 
 void DirectX11Manager::DrawBegin()
@@ -418,13 +441,13 @@ void DirectX11Manager::DrawBegin()
 	/*--------------------------------------------------------------------------*/
 
 	//RenderTargetをバックバッファ
-	ID3D11RenderTargetView* rtv[1] = { m_pRTView };
-	m_pImContext->OMSetRenderTargets(1, rtv, nullptr);
+	//ID3D11RenderTargetView* rtv[1] = { m_pRTView };
+	m_pImContext->OMSetRenderTargets(1, &m_pRTView, nullptr);
 }
 
 void DirectX11Manager::DrawEnd()
 {
-	m_pSwapChain->Present(0, 0);
+	m_pSwapChain->Present(1, 0);
 }
 
 void DirectX11Manager::DrawIndexed(UINT VertexNum)

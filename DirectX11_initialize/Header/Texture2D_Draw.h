@@ -19,6 +19,8 @@ using std::vector;
 class Texture2D_Draw
 {
 private:
+	//ウィンドウのサイズの指定
+	D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
 	ID3D11VertexShader * VertexShader = nullptr;
 	ID3D11PixelShader * PixelShader = nullptr;
 	ID3D11InputLayout * InputLayout = nullptr;
