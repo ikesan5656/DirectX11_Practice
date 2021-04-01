@@ -71,7 +71,7 @@ private:
 	//ComPtr<ID3D11RenderTargetView>  m_pRTView = nullptr;
 	ID3D11RenderTargetView * m_pRTView = nullptr;
 	//ウィンドウのサイズの指定
-	//D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
+	D3D11_VIEWPORT                  m_Viewport = { 0,0,0,0,0,0 };
 
 	//ID3D11VertexShader * VertexShader = nullptr;
 	
@@ -98,10 +98,11 @@ public:
 	ID3D11Device * GetDevice();
 	//コンテキストの取得
 	ID3D11DeviceContext * GetContext();
-	
+
+	//ビューポートの取得
+	D3D11_VIEWPORT GetViewport();
+
 	//頂点バッファ作成
-	//Templeteの仕様のためヘッダに記述している
-	//template<class x>
 	ID3D11Buffer* CreateVertexBuffer(int size, void* pBuffer)
 	{
 		//頂点バッファ作成

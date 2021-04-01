@@ -190,6 +190,14 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 		pBackBuffer_Tex = nullptr;
 	}
 
+	//ビューポート設定
+	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
+	m_Viewport.Height = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().bottom - WindowManager::GetInstance()->GetRC().top);
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+	m_Viewport.TopLeftX = 0;
+	m_Viewport.TopLeftY = 0;
+
 	//デプスステンシルビュー用のテクスチャーを作成
 	/*D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width = SCREEN_WIDTH;
@@ -325,6 +333,12 @@ ID3D11DeviceContext * DirectX11Manager::GetContext()
 	return m_pImContext;
 }
 
+//ビューポートの取得
+D3D11_VIEWPORT DirectX11Manager::GetViewport()
+{
+	return m_Viewport;
+}
+
 ID3D11Buffer * DirectX11Manager::CreateIndexBuffer(UINT * Index, UINT IndexNum)
 {
 	//インデックスバッファ作成
@@ -440,9 +454,15 @@ void DirectX11Manager::DrawBegin()
 
 	/*--------------------------------------------------------------------------*/
 
+	//ビューポート設定
+	m_pImContext->RSSetViewports(1, &m_Viewport);
+
 	//RenderTargetをバックバッファ
 	//ID3D11RenderTargetView* rtv[1] = { m_pRTView };
 	m_pImContext->OMSetRenderTargets(1, &m_pRTView, nullptr);
+
+
+
 }
 
 void DirectX11Manager::DrawEnd()

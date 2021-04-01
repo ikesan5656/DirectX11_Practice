@@ -19,14 +19,6 @@ struct SimpleVertex
 	XMFLOAT2 UV; //テクスチャー座標
 };
 
-#define ALIGN16 _declspec(align(16))
-//Simpleシェーダー用のコンスタントバッファーのアプリ側構造体 もちろんシェーダー内のコンスタントバッファーと一致している必要あり
-struct SIMPLESHADER_CONSTANT_BUFFER
-{
-	ALIGN16 XMMATRIX mW;
-	ALIGN16 float ViewPortWidth;
-	ALIGN16 float ViewPortHeight;
-};
 
 Texture2D_Draw::Texture2D_Draw()
 {
@@ -144,14 +136,14 @@ void Texture2D_Draw::Draw()
 {
 
 	// viewportの作成
-	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
+	/*m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
 	m_Viewport.Height = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().bottom - WindowManager::GetInstance()->GetRC().top);
 	m_Viewport.MinDepth = 0.0f;
 	m_Viewport.MaxDepth = 1.0f;
 	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
+	m_Viewport.TopLeftY = 0;*/
 	//ビューポートセット
-	DirectX11Manager::GetInstance()->GetContext()->RSSetViewports(1, &m_Viewport);
+	//DirectX11Manager::GetInstance()->GetContext()->RSSetViewports(1, &m_Viewport);
 
 	//使用するシェーダのセット
 	DX11ShaderManager::GetInstance()->SetVertexShader(VertexShader);

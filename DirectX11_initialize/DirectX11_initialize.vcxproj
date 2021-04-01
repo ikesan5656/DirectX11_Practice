@@ -128,19 +128,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\Polygon3D.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\DX11ShaderManager.cpp" />
     <ClCompile Include="Source\DirectX11Manager.cpp" />
     <ClCompile Include="Source\GameManager.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\MathOriginal.cpp" />
     <ClCompile Include="Source\PolygonDraw.cpp" />
     <ClCompile Include="Source\Texture2D_Draw.cpp" />
     <ClCompile Include="Source\WICTextureLoader.cpp" />
     <ClCompile Include="Source\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\DirectX11Manager.h" />
     <ClInclude Include="Header\DX11ShaderManager.h" />
     <ClInclude Include="Header\GameManager.h" />
+    <ClInclude Include="Header\MathOriginal.h" />
+    <ClInclude Include="Header\Polygon3D.h" />
     <ClInclude Include="Header\PolygonDraw.h" />
     <ClInclude Include="Header\Texture2D_Draw.h" />
     <ClInclude Include="Header\WICTextureLoader.h" />
