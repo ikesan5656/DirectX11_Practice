@@ -35,8 +35,7 @@ void Camera::Update()
 
 void Camera::Draw()
 {
-	//ワールドマトリクス作成
-	m_worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+
 	//ビュー マトリックスを作成
 	m_viewMatrix = XMMatrixLookAtLH(m_eye, m_focus, m_up);
 	//プロジェクションマトリクスを作成
@@ -45,10 +44,10 @@ void Camera::Draw()
 	
 }
 
-XMMATRIX Camera::GetWorldMatrix()
+/*XMMATRIX Camera::GetWorldMatrix()
 {
 	return m_worldMatrix;
-}
+}*/
 
 XMMATRIX Camera::GetViewMatrix()
 {

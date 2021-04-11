@@ -7,6 +7,7 @@
 #include "WindowManager.h"
 #include"DirectX11Manager.h"
 #include"GameManager.h"
+
 //コンストラクタ
 WindowManager::WindowManager()
 {
@@ -163,13 +164,21 @@ void WindowManager::Show()
 //メッセージループ
 bool WindowManager::MessageHandling()
 {
+	HRESULT	hr;//エラーチェック変数
+
 	DWORD dwExecLastTime = 0;//前回
 	DWORD dwCurrentTime = 0;//現在
 	//分解能を設定
 	timeBeginPeriod(1);
 
 	//DirectX11の初期化
-	DirectX11Manager::GetInstance()->Init(hWnd);
+	hr = DirectX11Manager::GetInstance()->Init(hWnd);
+	if (FAILED(hr)) {
+		MessageBox(NULL, TEXT("DirectX11初期化失敗"),
+			TEXT("メッセージボックス"), MB_OK);
+		return false;
+	}
+
 	GameManager::GetInstance()->Init();
 	do
 	{

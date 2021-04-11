@@ -65,8 +65,8 @@ private:
 	IDXGISwapChain * m_pSwapChain = nullptr;
 	//ディスプレイのバッグバッファのテクスチャ
 	//Texture2D                       m_pRTTex = nullptr;
-	ID3D11Texture2D* m_pBackBuffer_DSTex;
-	ID3D11DepthStencilView* m_pBackBuffer_DSTexDSV;
+	ID3D11Texture2D* m_pDepthStencilTexture = nullptr;
+	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
 	//ディスプレイのバッグバッファのテクスチャを描画先として指定できるようにしたもの
 	//ComPtr<ID3D11RenderTargetView>  m_pRTView = nullptr;
 	ID3D11RenderTargetView * m_pRTView = nullptr;
@@ -128,6 +128,10 @@ public:
 	
 	//インデックスバッファ作成
 	ID3D11Buffer* CreateIndexBuffer(UINT* Index, UINT IndexNum);
+
+	//立方体用インデックスバッファ作成
+	ID3D11Buffer* CreateCubeIndexBuffer(WORD* Index);
+
 	//頂点バッファのセット
 	void SetVertexBuffer(ID3D11Buffer* VertexBuffer, UINT VertexSize);
 	//インデックスバッファのセット

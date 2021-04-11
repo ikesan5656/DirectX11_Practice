@@ -128,7 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Header\Polygon3D.cpp" />
+    <ClCompile Include="Source\Polygon3D.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\DX11ShaderManager.cpp" />
     <ClCompile Include="Source\DirectX11Manager.cpp" />

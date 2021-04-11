@@ -15,8 +15,7 @@ class Camera
 {
 
 	private:
-		//世界の行列
-		XMMATRIX m_worldMatrix;
+
 		//カメラの位置
 		XMVECTOR m_eye;
 		//カメラの注視点の位置
@@ -42,7 +41,7 @@ class Camera
 		void Draw();
 
 		//ここから下はゲッター
-		XMMATRIX GetWorldMatrix();
+		//XMMATRIX GetWorldMatrix();
 		XMMATRIX GetViewMatrix();
 		XMMATRIX GetProjMatrix();
 

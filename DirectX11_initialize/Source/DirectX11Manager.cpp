@@ -162,6 +162,7 @@ HRESULT DirectX11Manager::CreateDeviceAndSwapChain(HWND hWnd)
 //=========================================================
 HRESULT DirectX11Manager::Init(HWND hWnd)
 {
+	HRESULT hr;
 	//*引数でウィンドウハンドルを渡している
 
 	//ハードウェアのチェック
@@ -174,7 +175,7 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	ID3D11Texture2D *pBackBuffer_Tex;
 
 	// スワップチェインに用意されたバッファ（2Dテクスチャ）を取得
-	auto hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
+	hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer_Tex));
 	if (FAILED(hr)) {
 		return hr;
 	}
@@ -189,6 +190,34 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 		pBackBuffer_Tex->Release();
 		pBackBuffer_Tex = nullptr;
 	}
+
+	//深度ステンシルバッファ作成(１回行えばOK)
+	D3D11_TEXTURE2D_DESC txDesc;
+	ZeroMemory(&txDesc, sizeof(txDesc));
+	txDesc.Width = SCREEN_WIDTH;
+	txDesc.Height = SCREEN_HEIGHT;
+	txDesc.MipLevels = 1;
+	txDesc.ArraySize = 1;
+	txDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	txDesc.SampleDesc.Count = 1;
+	txDesc.SampleDesc.Quality = 0;
+	txDesc.Usage = D3D11_USAGE_DEFAULT;
+	txDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	txDesc.CPUAccessFlags = 0;
+	txDesc.MiscFlags = 0;
+	hr = m_pDevice->CreateTexture2D(&txDesc, NULL, &m_pDepthStencilTexture);
+	if (FAILED(hr))
+		return hr;
+
+	//深度ステンシルビューを作成
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsDesc;
+	ZeroMemory(&dsDesc, sizeof(dsDesc));
+	dsDesc.Format = txDesc.Format;
+	dsDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsDesc.Texture2D.MipSlice = 0;
+	hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilTexture, &dsDesc, &m_pDepthStencilView);
+	if (FAILED(hr))
+		return hr;
 
 	//ビューポート設定
 	m_Viewport.Width = static_cast<FLOAT>(WindowManager::GetInstance()->GetRC().right - WindowManager::GetInstance()->GetRC().left);
@@ -214,6 +243,7 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	m_pDevice->CreateTexture2D(&descDepth, NULL, &m_pBackBuffer_DSTex);
 	//そのテクスチャーに対しデプスステンシルビュー(DSV)を作成
 	m_pDevice->CreateDepthStencilView(m_pBackBuffer_DSTex, NULL, &m_pBackBuffer_DSTexDSV);//正しい動作
+
 
 	//レンダーターゲットビューと深度ステンシルビューをパイプラインにバインド
 	m_pImContext->OMSetRenderTargets(1, &m_pRTView, m_pBackBuffer_DSTexDSV);*/
@@ -275,7 +305,17 @@ void DirectX11Manager::AllRelease()
 		m_pRTView->Release();
 		m_pRTView = nullptr;
 	}
-	if (m_pBackBuffer_DSTex) {
+
+	if (m_pDepthStencilTexture) {
+		m_pDepthStencilTexture->Release();
+		m_pDepthStencilTexture = nullptr;
+	}
+
+	if (m_pDepthStencilView) {
+		m_pDepthStencilView->Release();
+		m_pDepthStencilView = nullptr;
+	}
+	/*if (m_pBackBuffer_DSTex) {
 		m_pBackBuffer_DSTex->Release();
 		m_pBackBuffer_DSTex = nullptr;
 	}
@@ -283,7 +323,7 @@ void DirectX11Manager::AllRelease()
 	if (m_pBackBuffer_DSTexDSV) {
 		m_pBackBuffer_DSTexDSV->Release();
 		m_pBackBuffer_DSTexDSV = nullptr;
-	}
+	}*/
 	/*if (m_pRTTex) {
 		m_pRTTex->Release();
 		m_pRTTex = nullptr;
@@ -359,6 +399,29 @@ ID3D11Buffer * DirectX11Manager::CreateIndexBuffer(UINT * Index, UINT IndexNum)
 	}
 	return hpBuffer;
 }
+
+ID3D11Buffer* DirectX11Manager::CreateCubeIndexBuffer(WORD* Index)
+{
+	//インデックスバッファ作成
+	D3D11_BUFFER_DESC hBufferDesc;
+	ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
+	hBufferDesc.ByteWidth = sizeof(WORD) * 6 * 6;
+	hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	hBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	hBufferDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA hSubResourceData;
+	ZeroMemory(&hSubResourceData, sizeof(hSubResourceData));
+	hSubResourceData.pSysMem = Index;
+
+	ID3D11Buffer* hpBuffer;
+	if (FAILED(m_pDevice->CreateBuffer(&hBufferDesc, &hSubResourceData, &hpBuffer))) {
+		return nullptr;
+	}
+	return hpBuffer;
+}
+
+
 
 void DirectX11Manager::SetVertexBuffer(ID3D11Buffer * VertexBuffer, UINT VertexSize)
 {
