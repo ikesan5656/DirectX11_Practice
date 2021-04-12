@@ -1,8 +1,9 @@
 #include "Polygon3D.h"
 #include"DirectX11Manager.h"
 #include "DX11ShaderManager.h"
+#include "Camera.h"
 //DirectXMathがDirectXのネームスペースにある
-using namespace DirectX;
+
 //構造体
 struct Vertex {
     float pos[3];
@@ -61,6 +62,15 @@ struct ConstantBuffer {
     XMFLOAT4X4 view;
     XMFLOAT4X4 projection;
 };
+
+Polygon3D::Polygon3D()
+{
+}
+
+Polygon3D::~Polygon3D()
+{
+
+}
 
 void Polygon3D::Init()
 {
@@ -132,5 +142,42 @@ void Polygon3D::Update()
 void Polygon3D::Draw()
 {
     //ワールドマトリクス作成
-    m_worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+    m_WorldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+
+    //定数バッファ更新
+    ConstantBuffer cb;
+    XMStoreFloat4x4(&cb.world, XMMatrixTranspose(m_WorldMatrix));
+
+    XMMATRIX ViewMatrix = Camera::GetInstance()->GetViewMatrix();
+    XMStoreFloat4x4(&cb.view, XMMatrixTranspose(ViewMatrix));
+
+    XMMATRIX ProjMatrix = Camera::GetInstance()->GetProjMatrix();
+    XMStoreFloat4x4(&cb.projection, XMMatrixTranspose(ProjMatrix));
+
+    DirectX11Manager::GetInstance()->GetContext()->UpdateSubresource(
+        m_ConstantBuffer, 0, NULL, &cb, 0, 0);
+
+    //インプットレイアウトのセット
+    DirectX11Manager::GetInstance()->GetContext()->IASetInputLayout(m_InputLayout);
+    //頂点バッファのセット(複数の場合)
+    UINT strides = sizeof(Vertex);
+    UINT offsets = 0;
+    DirectX11Manager::GetInstance()->GetContext()->IASetVertexBuffers(
+        0, 1, &m_VertexBuffer, &strides, &offsets);
+    //インデックスバッファのセット
+    DirectX11Manager::GetInstance()->GetContext()->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    //プリミティブタイプの指定
+    DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //定数バッファのセット
+    DirectX11Manager::GetInstance()->GetContext()->VSSetConstantBuffers(0, 1, &m_ConstantBuffer);
+    //頂点シェーダのセット
+    DirectX11Manager::GetInstance()->GetContext()->VSSetShader(m_VertexShader, NULL, 0);
+    //ピクセルシェーダのセット
+    DirectX11Manager::GetInstance()->GetContext()->PSSetShader(m_PixelShader, NULL, 0);
+
+    //デプスとステンシルビューのクリア
+
+    //描画命令
+    DirectX11Manager::GetInstance()->GetContext()->DrawIndexed(36, 0, 0);
+
 }

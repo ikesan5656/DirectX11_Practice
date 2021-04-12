@@ -2,7 +2,7 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-
+using namespace DirectX;
 /**
 * @brief 3Dポリゴンクラス
 * @details 3D空間上に描画するクラス
@@ -23,9 +23,11 @@ private:
 	ID3D11PixelShader* m_PixelShader = nullptr;
 
 	//世界の行列
-	XMMATRIX m_worldMatrix;
+	XMMATRIX m_WorldMatrix;
 
 public:
+	Polygon3D();
+	~Polygon3D();
 	void Init();
 	void Uninit();
 	void Update();

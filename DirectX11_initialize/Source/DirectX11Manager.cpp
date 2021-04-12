@@ -525,6 +525,8 @@ void DirectX11Manager::DrawBegin()
 	m_pImContext->OMSetRenderTargets(1, &m_pRTView, nullptr);
 
 
+	//デプスステンシルビューをクリア
+	m_pImContext->ClearDepthStencilView(m_pDepthStencilView,D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 }
 
