@@ -36,7 +36,7 @@ void GameManager::Uninit()
 	//m_PolygonDraw->Uninit();
 	//delete m_PolygonDraw;
 	m_Polygon3D->Uninit();
-
+	delete m_Polygon3D;
 	//m_Texture2D_Draw->Uninit();
 	//delete m_Texture2D_Draw;
 
