@@ -145,13 +145,23 @@ void Polygon3D::Uninit()
 
 void Polygon3D::Update()
 {
+    //スケール
+    XMMATRIX scaling;
+    scaling = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+    //回転
+    XMMATRIX hRotate;
+    hRotate = XMMatrixRotationZ(XMConvertToRadians(30.0f));
+    //オフセット(移動)
+    XMMATRIX trans;
+    trans = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
+    //行列の乗算
+    m_WorldMatrix = scaling * hRotate * trans;
 }
 
 void Polygon3D::Draw()
 {
-    //ワールドマトリクス作成
-    m_WorldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+    //m_WorldMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
     //定数バッファ更新
     ConstantBuffer cb;
