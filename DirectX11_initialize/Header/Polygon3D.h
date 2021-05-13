@@ -23,7 +23,9 @@ private:
 	ID3D11PixelShader* m_PixelShader = nullptr;
 
 	//ê¢äEÇÃçsóÒ
-	XMMATRIX m_WorldMatrix;
+	XMMATRIX m_WorldMatrix = XMMatrixIdentity();
+
+	float m_RotateY = 0.0f;
 
 public:
 	Polygon3D();

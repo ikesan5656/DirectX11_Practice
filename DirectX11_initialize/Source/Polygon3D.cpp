@@ -2,6 +2,9 @@
 #include"DirectX11Manager.h"
 #include "DX11ShaderManager.h"
 #include "Camera.h"
+
+#include "XInputManager.h"
+
 //DirectXMathがDirectXのネームスペースにある
 
 //構造体
@@ -71,6 +74,7 @@ struct ConstantBuffer {
 
 Polygon3D::Polygon3D()
 {
+   
 }
 
 Polygon3D::~Polygon3D()
@@ -80,6 +84,8 @@ Polygon3D::~Polygon3D()
 
 void Polygon3D::Init()
 {
+    XinputManager::GetInstance()->Init();
+
     //頂点バッファ作成
     m_VertexBuffer = DirectX11Manager::GetInstance()->CreateVertexBuffer(sizeof(g_VertexList), g_VertexList);
     //インデックスバッファ作成
@@ -145,18 +151,27 @@ void Polygon3D::Uninit()
 
 void Polygon3D::Update()
 {
+    XinputManager::GetInstance()->Update();
+
     //スケール
     XMMATRIX scaling;
     scaling = XMMatrixScaling(1.0f, 1.0f, 1.0f);
     //回転
     XMMATRIX hRotate;
-    hRotate = XMMatrixRotationZ(XMConvertToRadians(30.0f));
+    hRotate = XMMatrixRotationY(XMConvertToRadians(m_RotateY));
     //オフセット(移動)
     XMMATRIX trans;
     trans = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
     //行列の乗算
     m_WorldMatrix = scaling * hRotate * trans;
+
+    //m_RotateY += 0.5f;
+
+    if (XinputManager::GetInstance()->GetKeyA()) {
+        m_RotateY += 0.5f;
+    }
+    
 }
 
 void Polygon3D::Draw()
