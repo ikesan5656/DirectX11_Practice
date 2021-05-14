@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Header\DirectInputManager.cpp" />
     <ClCompile Include="Source\XInputManager.cpp" />
     <ClCompile Include="Source\Polygon3D.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h" />
+    <ClInclude Include="Header\DirectInputManager.h" />
     <ClInclude Include="Header\DirectX11Manager.h" />
     <ClInclude Include="Header\DX11ShaderManager.h" />
     <ClInclude Include="Header\GameManager.h" />

@@ -7,12 +7,8 @@
 #include "WindowManager.h"
 #include"DirectX11Manager.h"
 #include"GameManager.h"
+#include "DirectInputManager.h"
 
-//コンストラクタ
-WindowManager::WindowManager()
-{
-	
-}
 
 //デストラクタ
 WindowManager::~WindowManager()
@@ -162,7 +158,7 @@ void WindowManager::Show()
 }
 
 //メッセージループ
-bool WindowManager::MessageHandling()
+bool WindowManager::MessageHandling(HINSTANCE hInstance)
 {
 	HRESULT	hr;//エラーチェック変数
 
@@ -173,11 +169,15 @@ bool WindowManager::MessageHandling()
 
 	//DirectX11の初期化
 	hr = DirectX11Manager::GetInstance()->Init(hWnd);
+
 	if (FAILED(hr)) {
 		MessageBox(NULL, TEXT("DirectX11初期化失敗"),
 			TEXT("メッセージボックス"), MB_OK);
 		return false;
 	}
+
+	//キーボード初期化
+	DirectInputManager::GetInstance()->InitKeyboard(hInstance, hWnd);
 
 	GameManager::GetInstance()->Init();
 	do
@@ -204,8 +204,10 @@ bool WindowManager::MessageHandling()
 					//ポリゴンの生成方法の指定(描画の直前)
 				//今回はトライアングルリストで描画
 				//DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				DirectX11Manager::GetInstance()->DrawBegin();
+				
+				DirectInputManager::GetInstance()->UpdateKeyboard();
 				GameManager::GetInstance()->Update();
+				DirectX11Manager::GetInstance()->DrawBegin();
 				GameManager::GetInstance()->Draw();
 				DirectX11Manager::GetInstance()->DrawEnd();
 			}
@@ -213,6 +215,7 @@ bool WindowManager::MessageHandling()
 	} while (msg.message != WM_QUIT);
 
 	GameManager::GetInstance()->Uninit();
+	DirectInputManager::GetInstance()->UninitKeyboard();
 	DirectX11Manager::GetInstance()->AllRelease();
 
 	//分解能を戻す

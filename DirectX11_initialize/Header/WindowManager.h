@@ -38,9 +38,7 @@ private:
 
 	//デスクトップのクライアント領域のサイズを保存する構造体変数。
 	RECT DrawRectBaseCalcPos;
-	//コンストラクタ
-	//*シングルトン実装のためコンストラクタをprivate
-	WindowManager();
+
 
 public:
 	//デストラクタ
@@ -63,7 +61,7 @@ public:
 	void Show();
 
 	//メッセージループ
-	bool MessageHandling();
+	bool MessageHandling(HINSTANCE hInstance);
 
 	RECT GetRC()
 	{

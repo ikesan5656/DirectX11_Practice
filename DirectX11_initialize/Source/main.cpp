@@ -39,7 +39,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	WindowManager::GetInstance()->InitializeWindow(hInstance);
 
 	//メッセージループ
-	WindowManager::GetInstance()->MessageHandling();
+	WindowManager::GetInstance()->MessageHandling(hInstance);
 
 	return 0;
 }

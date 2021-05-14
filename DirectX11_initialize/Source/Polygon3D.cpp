@@ -3,8 +3,8 @@
 #include "DX11ShaderManager.h"
 #include "Camera.h"
 
-#include "XInputManager.h"
-
+//#include "XInputManager.h"
+#include "DirectInputManager.h"
 //DirectXMathがDirectXのネームスペースにある
 
 //構造体
@@ -84,7 +84,6 @@ Polygon3D::~Polygon3D()
 
 void Polygon3D::Init()
 {
-    XinputManager::GetInstance()->Init();
 
     //頂点バッファ作成
     m_VertexBuffer = DirectX11Manager::GetInstance()->CreateVertexBuffer(sizeof(g_VertexList), g_VertexList);
@@ -151,7 +150,6 @@ void Polygon3D::Uninit()
 
 void Polygon3D::Update()
 {
-    XinputManager::GetInstance()->Update();
 
     //スケール
     XMMATRIX scaling;
@@ -168,9 +166,14 @@ void Polygon3D::Update()
 
     //m_RotateY += 0.5f;
 
-    if (XinputManager::GetInstance()->GetKeyA()) {
+    //if (XinputManager::GetInstance()->GetKeyA()) {
+    if(DirectInputManager::GetInstance()->GetKeyboardPress(DIK_LEFT)) {
         m_RotateY += 0.5f;
     }
+    if (DirectInputManager::GetInstance()->GetKeyboardPress(DIK_RIGHT)) {
+        m_RotateY -= 0.5f;
+    }
+
     
 }
 
