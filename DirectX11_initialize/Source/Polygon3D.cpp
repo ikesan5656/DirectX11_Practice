@@ -5,6 +5,7 @@
 
 //#include "XInputManager.h"
 #include "DirectInputManager.h"
+#include "XInputManager.h"
 //DirectXMathがDirectXのネームスペースにある
 
 //構造体
@@ -150,6 +151,7 @@ void Polygon3D::Uninit()
 
 void Polygon3D::Update()
 {
+    XinputManager::GetInstance()->Update();
 
     //スケール
     XMMATRIX scaling;
@@ -172,6 +174,10 @@ void Polygon3D::Update()
     }
     if (DirectInputManager::GetInstance()->GetKeyboardPress(DIK_RIGHT)) {
         m_RotateY -= 0.5f;
+    }
+
+    if (XinputManager::GetInstance()->GetPadA()) {
+        m_RotateY += 0.5f;
     }
 
     

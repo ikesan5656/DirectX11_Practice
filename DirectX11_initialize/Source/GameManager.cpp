@@ -4,6 +4,7 @@
 #include"Texture2D_Draw.h"
 #include "Camera.h"
 #include "Polygon3D.h"
+//#include "XInputManager.h"
 
 GameManager::~GameManager()
 {
@@ -45,13 +46,13 @@ void GameManager::Uninit()
 
 void GameManager::Update()
 {
+	
 	Camera::GetInstance()->Update();
 	m_Polygon3D->Update();
 }
 
 void GameManager::Draw()
 {
-	//Œ»ÝƒoƒO
 	Camera::GetInstance()->Draw();
 
 	m_Polygon3D->Draw();
