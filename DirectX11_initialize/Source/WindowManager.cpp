@@ -10,7 +10,7 @@
 #include "DirectInputManager.h"
 
 //#include "../ImGui/imgui_impl_win32.h"
-//#include "ImGuiManager_DX11.h"
+#include "ImGuiManager_DX11.h"
 //デストラクタ
 WindowManager::~WindowManager()
 {
@@ -25,15 +25,15 @@ WindowManager * WindowManager::GetInstance()
 	return &self;
 }
 
-//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//ImGuiのプロシージャ
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//ImGuiのプロシージャ
 LRESULT CALLBACK WindowManager::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	#ifdef _DEBUG
 
 	//ImGuiのプロシージャ
-	//if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) {
-		//return true;
-	//}
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) {
+		return true;
+	}
 
 	#endif
 
@@ -45,7 +45,7 @@ LRESULT CALLBACK WindowManager::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	case WM_SIZE:
 
 		#ifdef _DEBUG
-			//ImGuiManager_DX11::GetInstance()->CreateDevice();
+			ImGuiManager_DX11::GetInstance()->CreateDevice();
 		#endif
 				break;
 
@@ -183,6 +183,10 @@ bool WindowManager::MessageHandling(HINSTANCE hInstance)
 	//キーボード初期化
 	DirectInputManager::GetInstance()->InitKeyboard(hInstance, hWnd);
 
+	#ifdef _DEBUG
+	ImGuiManager_DX11::GetInstance()->Init(hWnd);
+	#endif
+
 	GameManager::GetInstance()->Init();
 	do
 	{
@@ -210,13 +214,27 @@ bool WindowManager::MessageHandling(HINSTANCE hInstance)
 				//DirectX11Manager::GetInstance()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 				
 				DirectInputManager::GetInstance()->UpdateKeyboard();
+				#ifdef _DEBUG
+				ImGuiManager_DX11::GetInstance()->Update();
+				#endif
 				GameManager::GetInstance()->Update();
+
 				DirectX11Manager::GetInstance()->DrawBegin();
+
 				GameManager::GetInstance()->Draw();
+				#ifdef _DEBUG
+								ImGuiManager_DX11::GetInstance()->Draw();
+				#endif
 				DirectX11Manager::GetInstance()->DrawEnd();
+
+
 			}
 		}
 	} while (msg.message != WM_QUIT);
+
+	#ifdef _DEBUG
+	ImGuiManager_DX11::GetInstance()->Uninit();
+	#endif
 
 	GameManager::GetInstance()->Uninit();
 	DirectInputManager::GetInstance()->UninitKeyboard();
