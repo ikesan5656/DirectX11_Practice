@@ -9,7 +9,8 @@
 #include"GameManager.h"
 #include "DirectInputManager.h"
 
-
+//#include "../ImGui/imgui_impl_win32.h"
+//#include "ImGuiManager_DX11.h"
 //デストラクタ
 WindowManager::~WindowManager()
 {
@@ -24,12 +25,15 @@ WindowManager * WindowManager::GetInstance()
 	return &self;
 }
 
+//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);//ImGuiのプロシージャ
 LRESULT CALLBACK WindowManager::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	#ifdef _DEBUG
 
-		//if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))//ImGuiのプロシージャ
-		//	return true;
+	//ImGuiのプロシージャ
+	//if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) {
+		//return true;
+	//}
 
 	#endif
 
@@ -41,7 +45,7 @@ LRESULT CALLBACK WindowManager::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	case WM_SIZE:
 
 		#ifdef _DEBUG
-				//CImGui_Manager::CreateDevice();
+			//ImGuiManager_DX11::GetInstance()->CreateDevice();
 		#endif
 				break;
 
