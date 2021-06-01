@@ -31,7 +31,7 @@ void Camera::Update()
 void Camera::Draw()
 {
 
-	m_eye = XMVectorSet(2.0f, 2.0f, -2.0f, 0.0f);
+	m_eye = XMVectorSet(0.0f, 2.0f, -2.0f, 0.0f);
 	m_focus = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	m_up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 

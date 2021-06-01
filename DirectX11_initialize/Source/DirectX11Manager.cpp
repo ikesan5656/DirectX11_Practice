@@ -258,11 +258,11 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 	////ビューポートセット
 	//m_pImContext->RSSetViewports(1, &m_Viewport);
 
-	//ラスタライザーの定義
+	//ラスタライザーの定義D3D11_FILL_WIREFRAME,
 	
-	/*D3D11_RASTERIZER_DESC hRasterizerDesc = {
+	D3D11_RASTERIZER_DESC hRasterizerDesc = {
 			D3D11_FILL_SOLID,
-			D3D11_CULL_FRONT,	//ポリゴンを前から見る
+			D3D11_CULL_BACK,	//ポリゴンの裏面を消す
 			FALSE,
 			0,
 			0.0f,
@@ -271,22 +271,24 @@ HRESULT DirectX11Manager::Init(HWND hWnd)
 			FALSE,
 			FALSE,
 			FALSE
-	};*/
+	};
 
-	//ID3D11RasterizerState* hpRasterizerState = NULL;
+	ID3D11RasterizerState* hpRasterizerState = NULL;
 
 	//ラスタライザーの作成
 	//カリングモードやフィルモードを変更出来る
-	//if (FAILED(m_pDevice->CreateRasterizerState(&hRasterizerDesc, &hpRasterizerState))) {
-	/*	MessageBox(hWnd, _T("CreateRasterizerState"), _T("Err"), MB_ICONSTOP);
-		goto End;*/
-	//}
+	/*if (FAILED(m_pDevice->CreateRasterizerState(&hRasterizerDesc, &hpRasterizerState))) {
+		MessageBox(hWnd, _T("CreateRasterizerState"), _T("Err"), MB_ICONSTOP);
+		//goto End;
+	}*/
 
+	m_pDevice->CreateRasterizerState(&hRasterizerDesc, &hpRasterizerState);
 	//ラスタライザーをコンテキストに設定
-	/*m_pImContext->RSSetState(hpRasterizerState);
+	m_pImContext->RSSetState(hpRasterizerState);
 
 	hpRasterizerState->Release();
-	hpRasterizerState = nullptr;*/
+	hpRasterizerState = nullptr;
+
 	return hr;
 }
 
@@ -379,12 +381,12 @@ D3D11_VIEWPORT DirectX11Manager::GetViewport()
 	return m_Viewport;
 }
 
-ID3D11Buffer * DirectX11Manager::CreateIndexBuffer(UINT * Index, UINT IndexNum)
+ID3D11Buffer * DirectX11Manager::CreateIndexBuffer(WORD* Index, UINT IndexNum)
 {
 	//インデックスバッファ作成
 	D3D11_BUFFER_DESC hBufferDesc;
 	ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
-	hBufferDesc.ByteWidth = sizeof(UINT) * IndexNum;
+	hBufferDesc.ByteWidth = sizeof(WORD) * IndexNum;
 	hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	hBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	hBufferDesc.CPUAccessFlags = 0;
@@ -509,7 +511,7 @@ void DirectX11Manager::DrawBegin()
 	/*-- 指定色で画面クリア ----------------------------------------------------*/
 
 	//画面色設定
-	float ClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f }; //red,green,blue,alpha
+	float ClearColor[4] = { 0.89f, 0.97f, 1.0f, 1.0f }; //red,green,blue,alpha
 	//レンダーターゲットのすべての要素を1つの値に設定
 	m_pImContext->ClearRenderTargetView(m_pRTView, ClearColor);
 	//ビューポートの配列をパイプラインのラスタライザーステージにバインドする

@@ -53,7 +53,7 @@ void PolygonDraw::Init()
 	//インデックス情報の設定
 	idxs = { 0,1,2,0,2,3 };
 	
-	IndexBuffer = DirectX11Manager::GetInstance()->CreateIndexBuffer(idxs.data(), static_cast<UINT>(idxs.size()));
+	//IndexBuffer = DirectX11Manager::GetInstance()->CreateIndexBuffer(idxs.data(), static_cast<UINT>(idxs.size()));
 
 
 }

@@ -90,6 +90,7 @@ void Polygon3D::Init()
     m_VertexBuffer = DirectX11Manager::GetInstance()->CreateVertexBuffer(sizeof(g_VertexList), g_VertexList);
     //インデックスバッファ作成
     m_IndexBuffer = DirectX11Manager::GetInstance()->CreateCubeIndexBuffer(g_IndexList);
+    //m_IndexBuffer = DirectX11Manager::GetInstance()->CreateIndexBuffer(g_IndexList, sizeof(g_IndexList));
 
     //定数バッファ作成(後に関数化)
     D3D11_BUFFER_DESC cbDesc;
@@ -161,7 +162,7 @@ void Polygon3D::Update()
     hRotate = XMMatrixRotationY(XMConvertToRadians(m_RotateY));
     //オフセット(移動)
     XMMATRIX trans;
-    trans = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+    trans = XMMatrixTranslation(0.0f, 1.0f, 0.0f);
 
     //行列の乗算
     m_WorldMatrix = scaling * hRotate * trans;

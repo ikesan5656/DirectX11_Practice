@@ -10,6 +10,7 @@
 class PolygonDraw;
 class Texture2D_Draw;
 class Polygon3D;
+class MeshField;
 
 class GameManager
 {
@@ -20,6 +21,7 @@ private:
 	PolygonDraw *m_PolygonDraw;
 	Texture2D_Draw* m_Texture2D_Draw;
 	Polygon3D* m_Polygon3D;
+	MeshField* m_MeshField;
 
 public:
 	//デストラクタ

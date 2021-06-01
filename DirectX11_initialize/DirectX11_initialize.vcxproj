@@ -138,6 +138,7 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\MeshField.cpp" />
     <ClCompile Include="Source\XInputManager.cpp" />
     <ClCompile Include="Source\Polygon3D.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Header\GameManager.h" />
     <ClInclude Include="Header\ImGuiManager_DX11.h" />
     <ClInclude Include="Header\MathOriginal.h" />
+    <ClInclude Include="Header\MeshField.h" />
     <ClInclude Include="Header\Polygon3D.h" />
     <ClInclude Include="Header\PolygonDraw.h" />
     <ClInclude Include="Header\Texture2D_Draw.h" />

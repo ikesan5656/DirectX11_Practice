@@ -127,7 +127,7 @@ public:
 	}
 	
 	//インデックスバッファ作成
-	ID3D11Buffer* CreateIndexBuffer(UINT* Index, UINT IndexNum);
+	ID3D11Buffer* CreateIndexBuffer(WORD* Index, UINT IndexNum);
 
 	//立方体用インデックスバッファ作成
 	ID3D11Buffer* CreateCubeIndexBuffer(WORD* Index);
