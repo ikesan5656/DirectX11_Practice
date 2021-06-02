@@ -139,6 +139,7 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Source\MeshField.cpp" />
+    <ClCompile Include="Source\Textured_3D_Polygon.cpp" />
     <ClCompile Include="Source\XInputManager.cpp" />
     <ClCompile Include="Source\Polygon3D.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Header\Polygon3D.h" />
     <ClInclude Include="Header\PolygonDraw.h" />
     <ClInclude Include="Header\Texture2D_Draw.h" />
+    <ClInclude Include="Header\Textured_3D_Polygon.h" />
     <ClInclude Include="Header\WICTextureLoader.h" />
     <ClInclude Include="Header\WindowManager.h" />
     <ClInclude Include="Header\XInputManager.h" />

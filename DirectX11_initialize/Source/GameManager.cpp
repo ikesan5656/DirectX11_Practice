@@ -6,6 +6,7 @@
 #include "Polygon3D.h"
 //#include "XInputManager.h"
 #include "MeshField.h"
+#include "Textured_3D_Polygon.h"
 
 GameManager::~GameManager()
 {
@@ -27,6 +28,9 @@ void GameManager::Init()
 	m_Polygon3D = new Polygon3D();
 	m_Polygon3D->Init();
 
+	m_Textured_3DPolygon = new Textured_3DPolygon();
+	m_Textured_3DPolygon->Init();
+
 	m_MeshField = new MeshField();
 	m_MeshField->Init();
 
@@ -43,6 +47,9 @@ void GameManager::Uninit()
 	m_MeshField->Uninit();
 	delete m_MeshField;
 
+	m_Textured_3DPolygon->Uninit();
+	delete m_Textured_3DPolygon;
+
 	m_Polygon3D->Uninit();
 	delete m_Polygon3D;
 	
@@ -57,6 +64,7 @@ void GameManager::Update()
 	
 	Camera::GetInstance()->Update();
 	m_Polygon3D->Update();
+	m_Textured_3DPolygon->Update();
 	m_MeshField->Update();
 }
 
@@ -64,8 +72,9 @@ void GameManager::Draw()
 {
 	Camera::GetInstance()->Draw();
 
-	m_Polygon3D->Draw();
-	m_MeshField->Draw();
+	//m_Polygon3D->Draw();
+	m_Textured_3DPolygon->Draw();
+	//m_MeshField->Draw();
 	//•`‰æŠJŽn
 	//DirectX11Manager::GetInstance()->DrawBegin();
 	//m_PolygonDraw->Draw();
